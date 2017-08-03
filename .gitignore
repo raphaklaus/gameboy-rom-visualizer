@@ -1,2 +1,4 @@
 .vscode
 roms
+_build
+deps
