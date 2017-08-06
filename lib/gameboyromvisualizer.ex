@@ -42,11 +42,11 @@ defmodule GameBoyRomVisualizer do
     result |> Enum.reverse |> Enum.join(",")
   end
 
-  defp parse_byte(<<low_byte :: size(8) >>, << high_byte :: size(8)>>, bit \\ 0, result \\ []) do
-    << most_significant_bit :: size(1), _ :: size(7) >> = << high_byte <<< bit >>
-    << least_significant_bit :: size(1), _ :: size(7) >> = << low_byte <<< bit >>
+  defp parse_byte(<<low_byte :: size(8) >>, << high_byte :: size(8)>>, shift \\ 0 ,bit \\ 0, result \\ []) do
+    << most_significant_bit :: size(1), _ :: size(7) >> = << high_byte <<< shift >>
+    << least_significant_bit :: size(1), _ :: size(7) >> = << low_byte <<< shift >>
     if bit < 8 do
-      parse_byte(<<low_byte <<< bit>>, <<high_byte <<< bit>>, bit + 1, [Bitwise.bor(most_significant_bit <<< 1, least_significant_bit) | result])
+      parse_byte(<<low_byte <<< shift>>, <<high_byte <<< shift>>, 1, bit + 1, [Bitwise.bor(most_significant_bit <<< 1, least_significant_bit) | result])
     else
       result |> Enum.reverse |> Enum.join(",")
     end
