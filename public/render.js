@@ -5,7 +5,25 @@ var context = document.getElementById('render').getContext('2d'),
   tile = 0,
   verticalPos = 1,
   horizontalPos = 1,
-  offset = 0;
+  offset = 0,
+  scrollVelocity = 1;
+
+function load(){
+  var file = document.getElementById('file').files[0];
+  var reader = new FileReader();
+  reader.onload = function (file) {
+    bits = file.target.result.split(',').map(item => +item);
+    render(bits, 0);
+  };
+  reader.readAsText(file);
+}
+
+function toggleScroll() {
+  if (scrollVelocity === 1)
+    scrollVelocity = 10;
+  else
+    scrollVelocity = 1;
+}
 
 var bits = [
   // tile 1
@@ -120,9 +138,9 @@ var bits = [
 
 function onScroll(event) {
   if (event.wheelDeltaY < 0)
-    offset += 6400;
+    offset += 640 * scrollVelocity;
   else
-    offset -= 6400;
+    offset -= 640 * scrollVelocity;
 
   if (offset < 0)
     offset = 0;
@@ -144,11 +162,11 @@ function render(data, offset) {
     if (item === 0)
       return '#222'
     else if (item === 1)
-      return '#666'
+      return '#d8af81'
     else if (item === 2)
       return '#aaa'
     else if (item === 3)
-      return '#ccc'
+      return '#f44620'
   });
 
   // console.log('hey', data.slice(offset, 6400 + offset));
