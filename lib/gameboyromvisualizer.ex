@@ -4,9 +4,9 @@ defmodule GameBoyRomVisualizer do
   def start do 
     import PipeHere
 
-    File.read!("./roms/PokemonRed.gb") 
-    |> read_header() 
-    |> parse_2bpp([]) 
+    file = File.read!("./roms/Mario.gbc") 
+    file |> read_header() 
+    file |> parse_2bpp([]) 
     |> File.write!('result', _) 
     |> pipe_here
   end
@@ -42,20 +42,15 @@ defmodule GameBoyRomVisualizer do
     result |> Enum.reverse |> Enum.join(",")
   end
 
+  defp parse_byte(<< _ :: size(8) >>, << _ :: size(8) >>, _, bit, result) when bit == 8 do
+    result |> Enum.reverse |> Enum.join(",")
+  end
+
   defp parse_byte(<<low_byte :: size(8) >>, << high_byte :: size(8)>>, shift \\ 0 ,bit \\ 0, result \\ []) do
     << most_significant_bit :: size(1), _ :: size(7) >> = << high_byte <<< shift >>
     << least_significant_bit :: size(1), _ :: size(7) >> = << low_byte <<< shift >>
-    if bit < 8 do
-      parse_byte(<<low_byte <<< shift>>, <<high_byte <<< shift>>, 1, bit + 1, [Bitwise.bor(most_significant_bit <<< 1, least_significant_bit) | result])
-    else
-      result |> Enum.reverse |> Enum.join(",")
-    end
+    parse_byte(<<low_byte <<< shift>>, <<high_byte <<< shift>>, 1, bit + 1, [Bitwise.bor(most_significant_bit <<< 1, least_significant_bit) | result])
   end
-
-  # todo: transform it in a macro, or overloaded function to get rid of the if
-  # defp parse_byte(<< 0x00 :: size(8) >>, << 0x00 :: size(8) >>, 8, result) do
-  #   result |> Enum.reverse |> |> Enum.join(",")
-  # end
 
   defp print_result(result, text) do
     IO.puts "#{text}: #{result}"
