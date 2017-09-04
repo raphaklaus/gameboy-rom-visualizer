@@ -55,8 +55,8 @@ function drawSquare(event) {
   mouseX = Math.trunc(event.offsetX / (8 * 6));
   mouseY = Math.trunc(event.offsetY / (8 * 6));
 
-  console.log('x', mouseX);
-  console.log('prevx', previousMouseX);
+  // console.log('x', mouseX);
+  // console.log('prevx', previousMouseX);
   
   if (previousMouseX !== mouseX || previousMouseY !== mouseY) {
     canvasGrid.clearRect(0, 0, 480, 480);
@@ -66,8 +66,11 @@ function drawSquare(event) {
     canvasGrid.rect(mouseX * 8, mouseY * 8, 8, 8);
     canvasGrid.stroke();
 
+    console.log('x', mouseX);
+    console.log('y', mouseY);
+
     document.querySelectorAll('.address-indicator > strong')[0].innerHTML = 
-      '#' + Number((mouseX + ((offset / 64) + mouseY * 10)) * 16).toString('16');
+      '#' + Number((mouseX * 16 + (((offset / 64) * 16) + mouseY * 10 * 16))).toString('16');
   }
 }
 
