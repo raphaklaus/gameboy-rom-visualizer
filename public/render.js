@@ -21,7 +21,8 @@ function load(){
   var file = document.getElementById('file').files[0];
   var reader = new FileReader();
   reader.onload = function (file) {
-    data = changePalette(file.target.result.split(',').map(item => +item));
+    file = parser(file.srcElement.result, file.srcElement.result.byteLength);
+    data = changePalette(file);
     render(data, 0);
     
     function onScroll(event) {
@@ -38,7 +39,7 @@ function load(){
 
     window.onwheel = onScroll;
   };
-  reader.readAsText(file);
+  reader.readAsArrayBuffer(file);
 }
 
 function toggleScroll() {
