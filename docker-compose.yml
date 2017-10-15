@@ -1,7 +1,10 @@
 version: '3'
 services:
-  elixir:
-    image: elixir
+  gb-rom-visualizer:
+    build:
+      context: .
+      dockerfile: Dockerfile
     volumes:
-      - .:/usr/src/app
-    working_dir: /usr/src/app
+      - $PWD:/usr/src/app
+    command: bash -c "mix compile"
+
