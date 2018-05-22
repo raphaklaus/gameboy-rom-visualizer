@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>GameBoy 2bpp format render</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="style.css" rel="stylesheet"> 
+    </head>
+    <body>
+        <input type="file" id="file">
+        <button onclick="load()">Load</button>
+        <button onclick="toggleScroll()">Toggle Scroll Velocity</button>
+        <div class="container">
+            <canvas id="canvas-tiles" width="480" height="480"></canvas>
+            <canvas id="canvas-grid" width="480" height="480" onmousemove="drawSquare(event)"></canvas>
+        </div>
+        <span class="address-indicator">
+            Address: <strong>0</strong>
+        </span>
+        <script src="parser.js"></script>
+        <script src="render.js"></script>
+    </body>
+</html>

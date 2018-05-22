@@ -1,5 +1,4 @@
 .vscode
 roms
-_build
-deps
-result
+node_modules
+yarn-error.log
