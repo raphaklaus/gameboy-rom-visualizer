@@ -8,17 +8,14 @@ const contextTiles = canvasTiles.getContext('2d') as CanvasRenderingContext2D,
   contextGrid = canvasGrid.getContext('2d') as CanvasRenderingContext2D
 
 const pixelSize = 1,
+  tileWidth = 8,
+  tileHeight = 8,
   canvasZoom = 6
 
-let data: Array<string>, mouseX: number, mouseY: number, previousMouseX, previousMouseY,
-  rowIndex = 0,
-  tile = 0,
-  colIndex = 0,
+let mouseX: number, mouseY: number, previousMouseX, previousMouseY,
   offset = 0,
   scrollVelocity = 1,
-  verticalPos = 1,
-  file,
-  horizontalPos = 1
+  file: Array<number>
 
 contextTiles.scale(canvasZoom, canvasZoom)
 contextGrid.scale(canvasZoom, canvasZoom)
@@ -34,8 +31,7 @@ const load = () => {
   const reader = new FileReader()
   reader.onload =  (event: Event) => {
     file = parser(reader.result, reader.result.byteLength)
-    data = changePalette(file)
-    render(data, 0)
+    render(changePalette(file))
 
     const onScroll = (scrollEvent: MouseWheelEvent) => {
       if (scrollEvent.wheelDeltaY < 0)
@@ -46,7 +42,7 @@ const load = () => {
       if (offset < 0)
         offset = 0
 
-      render(data, offset)
+      render(changePalette(file, offset), offset)
     }
 
     window.onwheel = onScroll
@@ -80,8 +76,9 @@ const drawSquare = (event: MouseEvent) => {
   }
 }
 
-function changePalette(data: Array<number>): Array<string> {
-  return data.map(item => {
+const changePalette = (data: Array<number>, offset = 0): Array<string> => {
+  return data.slice(offset, offset + 6400)
+  .map(item => {
     if (item === 0)
       return '#222'
     else if (item === 1)
@@ -93,38 +90,37 @@ function changePalette(data: Array<number>): Array<string> {
   })
 }
 
-const render = (data: Array<string>, offset: number) => {
-  rowIndex = 0
-  colIndex = 0
-  tile = 0
-  verticalPos = 0
-  horizontalPos = 0
+const render = (data: Array<string>, offset = 0) => {
+  let colIndex = 0,
+    rowIndex = 0,
+    tile = 0,
+    verticalPos = 0,
+    horizontalPos = 0
 
-  data.slice(offset, 6400 + offset).map((item, index) => {
+  data.forEach((pixel, index) => {
     if (index % 64 === 0) {
-      colIndex = 0
       rowIndex = 0
+      colIndex = 0
 
       if (tile % 10 === 0) {
         horizontalPos = 0
+
         if (tile > 0)
           verticalPos++
-      }
+      } else
+        horizontalPos++
 
-      data.slice(offset, 6400 + offset).slice(index, 64 * (tile + 1)).map((item, index) => {
-        contextTiles.fillStyle = item
-        if (index > 0 && index % 8 === 0) {
-          colIndex++
-          rowIndex = 0
-        }
-
-        contextTiles.fillRect(8 * horizontalPos * pixelSize + rowIndex * pixelSize,
-          8 * verticalPos * pixelSize + colIndex * pixelSize, pixelSize, pixelSize)
-        rowIndex++
-      })
-
-      horizontalPos++
       tile++
+    } else if (index % 8 === 0) {
+      rowIndex++
+      colIndex = 0
     }
+
+    contextTiles.fillStyle = pixel
+
+    contextTiles.fillRect((tileWidth * horizontalPos) + colIndex,
+      (tileHeight * verticalPos) + rowIndex, pixelSize, pixelSize)
+
+    colIndex++
   })
 }
