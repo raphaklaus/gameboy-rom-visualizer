@@ -125,7 +125,7 @@ rules:
   - allow-null-check
   binary-expression-operand-order: true
   no-dynamic-delete: true
-  no-bitwise: true
+  no-bitwise: false
   use-isnan: true
   no-conditional-assignment: true
 
